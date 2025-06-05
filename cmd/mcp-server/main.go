@@ -87,6 +87,11 @@ func initializeTools(s *server.MCPServer, ctx *internalServer.Context) error {
 		return fmt.Errorf("failed to register app tools: %w", err)
 	}
 
+	// Register catalog management tools
+	if err := tools.RegisterCatalogTools(s, ctx); err != nil {
+		return fmt.Errorf("failed to register catalog tools: %w", err)
+	}
+
 	// Health check tool
 	healthTool := mcp.NewTool(
 		"health",
