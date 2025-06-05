@@ -11,6 +11,7 @@ import (
 
 	"github.com/giantswarm/mcp-giantswarm-apps/internal/k8s"
 	internalServer "github.com/giantswarm/mcp-giantswarm-apps/internal/server"
+	"github.com/giantswarm/mcp-giantswarm-apps/pkg/tools"
 )
 
 const (
@@ -81,6 +82,11 @@ func main() {
 }
 
 func initializeTools(s *server.MCPServer, ctx *internalServer.Context) error {
+	// Register app management tools
+	if err := tools.RegisterAppTools(s, ctx); err != nil {
+		return fmt.Errorf("failed to register app tools: %w", err)
+	}
+
 	// Health check tool
 	healthTool := mcp.NewTool(
 		"health",
