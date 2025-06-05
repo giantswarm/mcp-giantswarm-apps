@@ -17,12 +17,12 @@ type AppCatalogEntry struct {
 
 // AppCatalogEntrySpec represents the spec of an AppCatalogEntry
 type AppCatalogEntrySpec struct {
-	AppName     string
-	AppVersion  string
-	Catalog     CatalogReference
-	Chart       ChartSpec
-	DateCreated *time.Time
-	DateUpdated *time.Time
+	AppName      string
+	AppVersion   string
+	Catalog      CatalogReference
+	Chart        ChartSpec
+	DateCreated  *time.Time
+	DateUpdated  *time.Time
 	Restrictions *Restrictions
 }
 
@@ -48,10 +48,10 @@ type ChartSpec struct {
 
 // Restrictions defines restrictions for the app
 type Restrictions struct {
-	ClusterSingleton  bool
+	ClusterSingleton   bool
 	NamespaceSingleton bool
-	FixedNamespace    string
-	GpuInstances      bool
+	FixedNamespace     string
+	GpuInstances       bool
 }
 
 // GetLatestVersion returns the latest version from the entry
@@ -298,4 +298,4 @@ func (e *AppCatalogEntry) ToUnstructured() *unstructured.Unstructured {
 	}
 
 	return obj
-} 
+}

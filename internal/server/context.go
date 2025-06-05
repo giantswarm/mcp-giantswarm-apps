@@ -16,4 +16,4 @@ func NewContext(k8sClient *k8s.Client, dynamicClient *k8s.DynamicClient) *Contex
 		K8sClient:     k8sClient,
 		DynamicClient: dynamicClient,
 	}
-} 
+}

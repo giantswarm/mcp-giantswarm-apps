@@ -29,7 +29,7 @@ func RegisterAppTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 
 	s.AddTool(listTool, func(toolCtx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		args := req.Params.Arguments.(map[string]interface{})
-		
+
 		namespace := getStringArg(args, "namespace")
 		labelSelector := getStringArg(args, "labels")
 		status := getStringArg(args, "status")
@@ -72,7 +72,7 @@ func RegisterAppTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 
 		var output strings.Builder
 		output.WriteString(fmt.Sprintf("Found %d apps:\n\n", len(apps)))
-		
+
 		for _, a := range apps {
 			output.WriteString(fmt.Sprintf("Name: %s\n", a.Name))
 			output.WriteString(fmt.Sprintf("Namespace: %s\n", a.Namespace))
@@ -116,15 +116,15 @@ func RegisterAppTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		output.WriteString(fmt.Sprintf("  Version: %s\n", app.Spec.Version))
 		output.WriteString(fmt.Sprintf("  Target Namespace: %s\n", app.Spec.Namespace))
 		output.WriteString(fmt.Sprintf("  In-Cluster: %v\n", app.Spec.KubeConfig.InCluster))
-		
+
 		if app.Spec.Config != nil {
 			output.WriteString("\nConfiguration:\n")
 			if app.Spec.Config.ConfigMap != nil {
-				output.WriteString(fmt.Sprintf("  ConfigMap: %s/%s\n", 
+				output.WriteString(fmt.Sprintf("  ConfigMap: %s/%s\n",
 					app.Spec.Config.ConfigMap.Namespace, app.Spec.Config.ConfigMap.Name))
 			}
 			if app.Spec.Config.Secret != nil {
-				output.WriteString(fmt.Sprintf("  Secret: %s/%s\n", 
+				output.WriteString(fmt.Sprintf("  Secret: %s/%s\n",
 					app.Spec.Config.Secret.Namespace, app.Spec.Config.Secret.Name))
 			}
 		}
@@ -132,11 +132,11 @@ func RegisterAppTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		if app.Spec.UserConfig != nil {
 			output.WriteString("\nUser Configuration:\n")
 			if app.Spec.UserConfig.ConfigMap != nil {
-				output.WriteString(fmt.Sprintf("  ConfigMap: %s/%s\n", 
+				output.WriteString(fmt.Sprintf("  ConfigMap: %s/%s\n",
 					app.Spec.UserConfig.ConfigMap.Namespace, app.Spec.UserConfig.ConfigMap.Name))
 			}
 			if app.Spec.UserConfig.Secret != nil {
-				output.WriteString(fmt.Sprintf("  Secret: %s/%s\n", 
+				output.WriteString(fmt.Sprintf("  Secret: %s/%s\n",
 					app.Spec.UserConfig.Secret.Namespace, app.Spec.UserConfig.Secret.Name))
 			}
 		}
@@ -169,7 +169,7 @@ func RegisterAppTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 
 	s.AddTool(createTool, func(toolCtx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		args := req.Params.Arguments.(map[string]interface{})
-		
+
 		name := args["name"].(string)
 		namespace := args["namespace"].(string)
 		catalog := args["catalog"].(string)
@@ -179,7 +179,7 @@ func RegisterAppTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		if targetNamespace == "" {
 			targetNamespace = appName
 		}
-		
+
 		inCluster := true
 		if val, ok := args["in-cluster"].(bool); ok {
 			inCluster = val
@@ -324,4 +324,4 @@ func getBoolArg(args map[string]interface{}, key string) bool {
 		return val
 	}
 	return false
-} 
+}

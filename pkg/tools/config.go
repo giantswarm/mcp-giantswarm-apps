@@ -77,14 +77,14 @@ func RegisterConfigTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 			sb.WriteString(fmt.Sprintf("Name: %s\n", cfg.Name))
 			sb.WriteString(fmt.Sprintf("Namespace: %s\n", cfg.Namespace))
 			sb.WriteString(fmt.Sprintf("Type: %s\n", cfg.Type))
-			
+
 			if len(cfg.Labels) > 0 {
 				sb.WriteString("\nLabels:\n")
 				for k, v := range cfg.Labels {
 					sb.WriteString(fmt.Sprintf("  %s: %s\n", k, v))
 				}
 			}
-			
+
 			sb.WriteString("\nData:\n")
 			if cfg.IsSecret() && !decode {
 				sb.WriteString("  (base64 encoded - use --decode to view)\n")
@@ -527,4 +527,4 @@ func RegisterConfigTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 	})
 
 	return nil
-} 
+}

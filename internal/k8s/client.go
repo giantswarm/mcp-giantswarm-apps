@@ -53,7 +53,7 @@ func getConfig(kubeContext string) (*rest.Config, string, error) {
 
 	// Fall back to kubeconfig
 	kubeconfigPath := getKubeconfigPath()
-	
+
 	// Build config from kubeconfig file
 	configLoadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
 	configLoadingRules.ExplicitPath = kubeconfigPath
@@ -110,7 +110,7 @@ func (c *Client) GetCurrentContext() string {
 // ListContexts returns all available contexts from kubeconfig
 func ListContexts() ([]string, string, error) {
 	kubeconfigPath := getKubeconfigPath()
-	
+
 	configLoadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
 	configLoadingRules.ExplicitPath = kubeconfigPath
 
@@ -130,4 +130,4 @@ func ListContexts() ([]string, string, error) {
 	}
 
 	return contexts, rawConfig.CurrentContext, nil
-} 
+}

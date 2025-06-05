@@ -27,7 +27,7 @@ func RegisterCatalogTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 
 	s.AddTool(listTool, func(toolCtx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		args := req.Params.Arguments.(map[string]interface{})
-		
+
 		namespace := getStringArg(args, "namespace")
 		catalogType := getStringArg(args, "type")
 		visibility := getStringArg(args, "visibility")
@@ -48,7 +48,7 @@ func RegisterCatalogTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 
 		var output strings.Builder
 		output.WriteString(fmt.Sprintf("Found %d catalogs:\n\n", len(catalogs)))
-		
+
 		for _, c := range catalogs {
 			output.WriteString(fmt.Sprintf("Name: %s\n", c.Name))
 			output.WriteString(fmt.Sprintf("Namespace: %s\n", c.Namespace))
@@ -93,18 +93,18 @@ func RegisterCatalogTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		output.WriteString("\nMetadata:\n")
 		output.WriteString(fmt.Sprintf("  Type: %s\n", catalog.CatalogType()))
 		output.WriteString(fmt.Sprintf("  Visibility: %s\n", catalog.CatalogVisibility()))
-		
+
 		output.WriteString("\nSpec:\n")
 		output.WriteString(fmt.Sprintf("  Title: %s\n", catalog.Spec.Title))
 		output.WriteString(fmt.Sprintf("  Description: %s\n", catalog.Spec.Description))
 		if catalog.Spec.LogoURL != "" {
 			output.WriteString(fmt.Sprintf("  Logo URL: %s\n", catalog.Spec.LogoURL))
 		}
-		
+
 		output.WriteString("\nStorage:\n")
 		output.WriteString(fmt.Sprintf("  Type: %s\n", catalog.Spec.Storage.Type))
 		output.WriteString(fmt.Sprintf("  URL: %s\n", catalog.Spec.Storage.URL))
-		
+
 		if len(catalog.Spec.Repositories) > 0 {
 			output.WriteString("\nRepositories:\n")
 			for i, repo := range catalog.Spec.Repositories {
@@ -116,11 +116,11 @@ func RegisterCatalogTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		if catalog.Spec.Config != nil {
 			output.WriteString("\nConfiguration:\n")
 			if catalog.Spec.Config.ConfigMap != nil {
-				output.WriteString(fmt.Sprintf("  ConfigMap: %s/%s\n", 
+				output.WriteString(fmt.Sprintf("  ConfigMap: %s/%s\n",
 					catalog.Spec.Config.ConfigMap.Namespace, catalog.Spec.Config.ConfigMap.Name))
 			}
 			if catalog.Spec.Config.Secret != nil {
-				output.WriteString(fmt.Sprintf("  Secret: %s/%s\n", 
+				output.WriteString(fmt.Sprintf("  Secret: %s/%s\n",
 					catalog.Spec.Config.Secret.Namespace, catalog.Spec.Config.Secret.Name))
 			}
 		}
@@ -146,13 +146,13 @@ func RegisterCatalogTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 
 	s.AddTool(createTool, func(toolCtx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		args := req.Params.Arguments.(map[string]interface{})
-		
+
 		name := args["name"].(string)
 		namespace := args["namespace"].(string)
 		title := args["title"].(string)
 		description := args["description"].(string)
 		storageURL := args["storage-url"].(string)
-		
+
 		storageType := getStringArg(args, "storage-type")
 		if storageType == "" {
 			storageType = "helm"
@@ -298,4 +298,4 @@ func RegisterCatalogTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 	})
 
 	return nil
-} 
+}

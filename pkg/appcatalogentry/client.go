@@ -65,8 +65,8 @@ func (c *Client) ListByCatalog(ctx context.Context, catalogName, catalogNamespac
 
 	filtered := make([]*AppCatalogEntry, 0)
 	for _, entry := range entries {
-		if entry.Spec.Catalog.Name == catalogName && 
-		   (catalogNamespace == "" || entry.Spec.Catalog.Namespace == catalogNamespace) {
+		if entry.Spec.Catalog.Name == catalogName &&
+			(catalogNamespace == "" || entry.Spec.Catalog.Namespace == catalogNamespace) {
 			filtered = append(filtered, entry)
 		}
 	}
@@ -204,18 +204,18 @@ func SortByDate(entries []*AppCatalogEntry) []*AppCatalogEntry {
 // GroupByApp groups entries by app name
 func GroupByApp(entries []*AppCatalogEntry) map[string][]*AppCatalogEntry {
 	grouped := make(map[string][]*AppCatalogEntry)
-	
+
 	for _, entry := range entries {
 		appName := entry.Spec.AppName
 		if appName == "" {
 			appName = entry.Spec.Chart.Name
 		}
-		
+
 		if _, exists := grouped[appName]; !exists {
 			grouped[appName] = make([]*AppCatalogEntry, 0)
 		}
 		grouped[appName] = append(grouped[appName], entry)
 	}
-	
+
 	return grouped
-} 
+}

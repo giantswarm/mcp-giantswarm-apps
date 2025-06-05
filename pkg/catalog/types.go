@@ -6,10 +6,10 @@ import (
 
 // Catalog represents a Giant Swarm Catalog resource
 type Catalog struct {
-	Name        string
-	Namespace   string
-	Spec        CatalogSpec
-	Labels      map[string]string
+	Name      string
+	Namespace string
+	Spec      CatalogSpec
+	Labels    map[string]string
 }
 
 // CatalogSpec represents the spec of a Catalog
@@ -199,23 +199,23 @@ func (c *Catalog) ToUnstructured() *unstructured.Unstructured {
 	if c.Spec.Config != nil {
 		spec := obj.Object["spec"].(map[string]interface{})
 		config := make(map[string]interface{})
-		
+
 		if c.Spec.Config.ConfigMap != nil {
 			config["configMap"] = map[string]interface{}{
 				"name":      c.Spec.Config.ConfigMap.Name,
 				"namespace": c.Spec.Config.ConfigMap.Namespace,
 			}
 		}
-		
+
 		if c.Spec.Config.Secret != nil {
 			config["secret"] = map[string]interface{}{
 				"name":      c.Spec.Config.Secret.Name,
 				"namespace": c.Spec.Config.Secret.Namespace,
 			}
 		}
-		
+
 		spec["config"] = config
 	}
 
 	return obj
-} 
+}

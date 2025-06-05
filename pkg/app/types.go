@@ -14,13 +14,13 @@ type App struct {
 
 // AppSpec represents the spec of an App
 type AppSpec struct {
-	Catalog     string
-	Name        string
-	Namespace   string
-	Version     string
-	KubeConfig  KubeConfig
-	Config      *AppConfig
-	UserConfig  *AppConfig
+	Catalog    string
+	Name       string
+	Namespace  string
+	Version    string
+	KubeConfig KubeConfig
+	Config     *AppConfig
+	UserConfig *AppConfig
 }
 
 // KubeConfig represents the kubeconfig for the app
@@ -190,21 +190,21 @@ func (a *App) ToUnstructured() *unstructured.Unstructured {
 	if a.Spec.Config != nil {
 		spec := obj.Object["spec"].(map[string]interface{})
 		config := make(map[string]interface{})
-		
+
 		if a.Spec.Config.ConfigMap != nil {
 			config["configMap"] = map[string]interface{}{
 				"name":      a.Spec.Config.ConfigMap.Name,
 				"namespace": a.Spec.Config.ConfigMap.Namespace,
 			}
 		}
-		
+
 		if a.Spec.Config.Secret != nil {
 			config["secret"] = map[string]interface{}{
 				"name":      a.Spec.Config.Secret.Name,
 				"namespace": a.Spec.Config.Secret.Namespace,
 			}
 		}
-		
+
 		spec["config"] = config
 	}
 
@@ -212,23 +212,23 @@ func (a *App) ToUnstructured() *unstructured.Unstructured {
 	if a.Spec.UserConfig != nil {
 		spec := obj.Object["spec"].(map[string]interface{})
 		userConfig := make(map[string]interface{})
-		
+
 		if a.Spec.UserConfig.ConfigMap != nil {
 			userConfig["configMap"] = map[string]interface{}{
 				"name":      a.Spec.UserConfig.ConfigMap.Name,
 				"namespace": a.Spec.UserConfig.ConfigMap.Namespace,
 			}
 		}
-		
+
 		if a.Spec.UserConfig.Secret != nil {
 			userConfig["secret"] = map[string]interface{}{
 				"name":      a.Spec.UserConfig.Secret.Name,
 				"namespace": a.Spec.UserConfig.Secret.Namespace,
 			}
 		}
-		
+
 		spec["userConfig"] = userConfig
 	}
 
 	return obj
-} 
+}

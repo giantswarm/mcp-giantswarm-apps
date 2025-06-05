@@ -29,7 +29,7 @@ func RegisterAppCatalogEntryTools(s *mcpserver.MCPServer, ctx *server.Context) e
 
 	s.AddTool(listTool, func(toolCtx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		args := req.Params.Arguments.(map[string]interface{})
-		
+
 		namespace := getStringArg(args, "namespace")
 		catalogName := getStringArg(args, "catalog")
 		catalogNamespace := getStringArg(args, "catalog-namespace")
@@ -74,7 +74,7 @@ func RegisterAppCatalogEntryTools(s *mcpserver.MCPServer, ctx *server.Context) e
 
 		var output strings.Builder
 		output.WriteString(fmt.Sprintf("Found %d app catalog entries:\n\n", len(entries)))
-		
+
 		for _, entry := range entries {
 			output.WriteString(fmt.Sprintf("Name: %s\n", entry.Name))
 			output.WriteString(fmt.Sprintf("App: %s\n", entry.Spec.AppName))
@@ -113,15 +113,15 @@ func RegisterAppCatalogEntryTools(s *mcpserver.MCPServer, ctx *server.Context) e
 		var output strings.Builder
 		output.WriteString(fmt.Sprintf("App Catalog Entry: %s\n", entry.Name))
 		output.WriteString(fmt.Sprintf("Namespace: %s\n", entry.Namespace))
-		
+
 		output.WriteString("\nApp Information:\n")
 		output.WriteString(fmt.Sprintf("  App Name: %s\n", entry.Spec.AppName))
 		output.WriteString(fmt.Sprintf("  App Version: %s\n", entry.Spec.AppVersion))
-		
+
 		output.WriteString("\nCatalog:\n")
 		output.WriteString(fmt.Sprintf("  Name: %s\n", entry.Spec.Catalog.Name))
 		output.WriteString(fmt.Sprintf("  Namespace: %s\n", entry.Spec.Catalog.Namespace))
-		
+
 		output.WriteString("\nChart Details:\n")
 		output.WriteString(fmt.Sprintf("  Name: %s\n", entry.Spec.Chart.Name))
 		output.WriteString(fmt.Sprintf("  Version: %s\n", entry.Spec.Chart.Version))
@@ -135,18 +135,18 @@ func RegisterAppCatalogEntryTools(s *mcpserver.MCPServer, ctx *server.Context) e
 		if entry.Spec.Chart.Icon != "" {
 			output.WriteString(fmt.Sprintf("  Icon: %s\n", entry.Spec.Chart.Icon))
 		}
-		
+
 		if len(entry.Spec.Chart.Keywords) > 0 {
 			output.WriteString(fmt.Sprintf("  Keywords: %s\n", strings.Join(entry.Spec.Chart.Keywords, ", ")))
 		}
-		
+
 		if len(entry.Spec.Chart.Sources) > 0 {
 			output.WriteString("  Sources:\n")
 			for _, source := range entry.Spec.Chart.Sources {
 				output.WriteString(fmt.Sprintf("    - %s\n", source))
 			}
 		}
-		
+
 		if len(entry.Spec.Chart.URLs) > 0 {
 			output.WriteString("  URLs:\n")
 			for _, url := range entry.Spec.Chart.URLs {
@@ -203,16 +203,16 @@ func RegisterAppCatalogEntryTools(s *mcpserver.MCPServer, ctx *server.Context) e
 
 		var output strings.Builder
 		output.WriteString(fmt.Sprintf("Found %d apps matching '%s':\n\n", len(results), query))
-		
+
 		// Group by app to show all versions together
 		grouped := appcatalogentry.GroupByApp(results)
-		
+
 		for appName, versions := range grouped {
 			output.WriteString(fmt.Sprintf("App: %s\n", appName))
-			
+
 			// Sort versions by date
 			sorted := appcatalogentry.SortByDate(versions)
-			
+
 			for i, entry := range sorted {
 				if i == 0 {
 					output.WriteString(fmt.Sprintf("  Latest: %s (App: %s)\n", entry.GetLatestVersion(), entry.GetAppVersion()))
@@ -263,7 +263,7 @@ func RegisterAppCatalogEntryTools(s *mcpserver.MCPServer, ctx *server.Context) e
 
 		var output strings.Builder
 		output.WriteString(fmt.Sprintf("Available versions for %s:\n\n", appName))
-		
+
 		for i, entry := range sorted {
 			output.WriteString(fmt.Sprintf("%d. Version: %s (App: %s)\n", i+1, entry.GetLatestVersion(), entry.GetAppVersion()))
 			output.WriteString(fmt.Sprintf("   Entry: %s/%s\n", entry.Namespace, entry.Name))
@@ -283,4 +283,4 @@ func RegisterAppCatalogEntryTools(s *mcpserver.MCPServer, ctx *server.Context) e
 	})
 
 	return nil
-} 
+}

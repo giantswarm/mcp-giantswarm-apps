@@ -100,17 +100,17 @@ func (c *Config) FromYAML(yamlData string) error {
 	if c.Data == nil {
 		c.Data = make(map[string]string)
 	}
-	
+
 	var data map[string]interface{}
 	if err := yaml.Unmarshal([]byte(yamlData), &data); err != nil {
 		return fmt.Errorf("failed to unmarshal YAML: %w", err)
 	}
-	
+
 	// Convert to string map
 	for k, v := range data {
 		c.Data[k] = fmt.Sprintf("%v", v)
 	}
-	
+
 	return nil
 }
 
@@ -119,17 +119,17 @@ func (c *Config) FromJSON(jsonData string) error {
 	if c.Data == nil {
 		c.Data = make(map[string]string)
 	}
-	
+
 	var data map[string]interface{}
 	if err := json.Unmarshal([]byte(jsonData), &data); err != nil {
 		return fmt.Errorf("failed to unmarshal JSON: %w", err)
 	}
-	
+
 	// Convert to string map
 	for k, v := range data {
 		c.Data[k] = fmt.Sprintf("%v", v)
 	}
-	
+
 	return nil
 }
 
@@ -139,7 +139,7 @@ func (c *Config) MergeWith(other *Config) {
 	if c.Data == nil {
 		c.Data = make(map[string]string)
 	}
-	
+
 	for k, v := range other.Data {
 		c.Data[k] = v
 	}
@@ -152,7 +152,7 @@ func (c *Config) Diff(other *Config) *ConfigDiff {
 		Modified: make(map[string]DiffEntry),
 		Removed:  make(map[string]string),
 	}
-	
+
 	// Check for added and modified keys
 	for k, v := range other.Data {
 		if oldV, exists := c.Data[k]; exists {
@@ -163,14 +163,14 @@ func (c *Config) Diff(other *Config) *ConfigDiff {
 			diff.Added[k] = v
 		}
 	}
-	
+
 	// Check for removed keys
 	for k, v := range c.Data {
 		if _, exists := other.Data[k]; !exists {
 			diff.Removed[k] = v
 		}
 	}
-	
+
 	return diff
 }
 
@@ -199,12 +199,12 @@ func NewConfigFromSecret(secret *corev1.Secret) *Config {
 		Data:      make(map[string]string),
 		Labels:    secret.Labels,
 	}
-	
+
 	// Decode secret data
 	for k, v := range secret.Data {
 		config.Data[k] = string(v)
 	}
-	
+
 	return config
 }
 
@@ -231,12 +231,12 @@ func (c *Config) ToSecret() *corev1.Secret {
 		Type: corev1.SecretTypeOpaque,
 		Data: make(map[string][]byte),
 	}
-	
+
 	// Encode secret data
 	for k, v := range c.Data {
 		secret.Data[k] = []byte(v)
 	}
-	
+
 	return secret
 }
 
@@ -245,7 +245,7 @@ func (c *Config) EncodeSecretData() {
 	if c.Type != ConfigTypeSecret {
 		return
 	}
-	
+
 	encoded := make(map[string]string)
 	for k, v := range c.Data {
 		encoded[k] = base64.StdEncoding.EncodeToString([]byte(v))
@@ -258,7 +258,7 @@ func (c *Config) DecodeSecretData() error {
 	if c.Type != ConfigTypeSecret {
 		return nil
 	}
-	
+
 	decoded := make(map[string]string)
 	for k, v := range c.Data {
 		data, err := base64.StdEncoding.DecodeString(v)
@@ -269,4 +269,4 @@ func (c *Config) DecodeSecretData() error {
 	}
 	c.Data = decoded
 	return nil
-} 
+}

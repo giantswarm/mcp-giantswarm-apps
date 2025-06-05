@@ -66,7 +66,7 @@ func (c *Client) Get(ctx context.Context, namespace, name string) (*Catalog, err
 // Create creates a new catalog
 func (c *Client) Create(ctx context.Context, catalog *Catalog) (*Catalog, error) {
 	unstructuredCatalog := catalog.ToUnstructured()
-	
+
 	created, err := c.dynamicClient.Catalogs(catalog.Namespace).Create(ctx, unstructuredCatalog, metav1.CreateOptions{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create catalog %s/%s: %w", catalog.Namespace, catalog.Name, err)
@@ -85,7 +85,7 @@ func (c *Client) Update(ctx context.Context, catalog *Catalog) (*Catalog, error)
 
 	// Convert to unstructured
 	unstructuredCatalog := catalog.ToUnstructured()
-	
+
 	// Preserve resource version for update
 	currentUnstructured := current.ToUnstructured()
 	unstructuredCatalog.SetResourceVersion(currentUnstructured.GetResourceVersion())
@@ -146,4 +146,4 @@ func ValidateRepositoryURL(url string) error {
 		return fmt.Errorf("repository URL cannot be empty")
 	}
 	return nil
-} 
+}

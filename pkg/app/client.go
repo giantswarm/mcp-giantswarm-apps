@@ -70,7 +70,7 @@ func (c *Client) Get(ctx context.Context, namespace, name string) (*App, error) 
 // Create creates a new app
 func (c *Client) Create(ctx context.Context, app *App) (*App, error) {
 	unstructuredApp := app.ToUnstructured()
-	
+
 	created, err := c.dynamicClient.Apps(app.Namespace).Create(ctx, unstructuredApp, metav1.CreateOptions{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create app %s/%s: %w", app.Namespace, app.Name, err)
@@ -89,7 +89,7 @@ func (c *Client) Update(ctx context.Context, app *App) (*App, error) {
 
 	// Convert to unstructured
 	unstructuredApp := app.ToUnstructured()
-	
+
 	// Preserve resource version for update
 	currentUnstructured := current.ToUnstructured()
 	unstructuredApp.SetResourceVersion(currentUnstructured.GetResourceVersion())
@@ -160,7 +160,7 @@ func (c *Client) GetOrganizationNamespaces(ctx context.Context, k8sClient *k8s.C
 			"giantswarm.io/organization": "true",
 		}.String(),
 	})
-	
+
 	if err != nil {
 		// Fallback to listing all namespaces and filtering by prefix
 		allNamespaces, err := k8sClient.CoreV1().Namespaces().List(ctx, metav1.ListOptions{})
@@ -183,4 +183,4 @@ func (c *Client) GetOrganizationNamespaces(ctx context.Context, k8sClient *k8s.C
 	}
 
 	return namespaces, nil
-} 
+}

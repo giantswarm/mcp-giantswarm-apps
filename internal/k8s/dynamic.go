@@ -110,4 +110,4 @@ func (d *DynamicClient) CheckCRDsExist(ctx context.Context, client *Client) erro
 	}
 
 	return nil
-} 
+}

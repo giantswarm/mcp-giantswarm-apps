@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/giantswarm/mcp-giantswarm-apps/internal/k8s"
 	internalServer "github.com/giantswarm/mcp-giantswarm-apps/internal/server"
+	"github.com/giantswarm/mcp-giantswarm-apps/pkg/resources"
 	"github.com/giantswarm/mcp-giantswarm-apps/pkg/tools"
 )
 
@@ -27,7 +29,7 @@ func main() {
 	// Initialize Kubernetes client
 	ctx := context.Background()
 	kubeContext := os.Getenv("KUBE_CONTEXT") // Allow overriding context via env var
-	
+
 	k8sClient, err := k8s.NewClient(ctx, kubeContext)
 	if err != nil {
 		log.Fatalf("Failed to initialize Kubernetes client: %v", err)
@@ -165,8 +167,155 @@ func initializeTools(s *server.MCPServer, ctx *internalServer.Context) error {
 }
 
 func initializeResources(s *server.MCPServer, ctx *internalServer.Context) error {
-	// Placeholder for resource initialization
-	// We'll add actual resources in subsequent commits
+	// Create resource provider
+	provider := resources.NewProvider(ctx.K8sClient, ctx.DynamicClient)
+
+	// Register resource templates for dynamic resources
+	// App resource template
+	appTemplate := mcp.NewResourceTemplate(
+		"app://{namespace}/{name}",
+		"App Resource",
+		mcp.WithTemplateDescription("Giant Swarm app details and status"),
+		mcp.WithTemplateMIMEType("application/json"),
+	)
+
+	s.AddResourceTemplate(appTemplate, func(rctx context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
+		content, err := provider.GetResource(rctx, request.Params.URI)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get resource %s: %w", request.Params.URI, err)
+		}
+
+		// Convert to JSON
+		jsonData, err := json.MarshalIndent(content, "", "  ")
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal resource content: %w", err)
+		}
+
+		return []mcp.ResourceContents{
+			mcp.TextResourceContents{
+				URI:      request.Params.URI,
+				MIMEType: "application/json",
+				Text:     string(jsonData),
+			},
+		}, nil
+	})
+
+	// Catalog resource template
+	catalogTemplate := mcp.NewResourceTemplate(
+		"catalog://{name}",
+		"Catalog Resource",
+		mcp.WithTemplateDescription("Giant Swarm catalog information"),
+		mcp.WithTemplateMIMEType("application/json"),
+	)
+
+	s.AddResourceTemplate(catalogTemplate, func(rctx context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
+		content, err := provider.GetResource(rctx, request.Params.URI)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get resource %s: %w", request.Params.URI, err)
+		}
+
+		// Convert to JSON
+		jsonData, err := json.MarshalIndent(content, "", "  ")
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal resource content: %w", err)
+		}
+
+		return []mcp.ResourceContents{
+			mcp.TextResourceContents{
+				URI:      request.Params.URI,
+				MIMEType: "application/json",
+				Text:     string(jsonData),
+			},
+		}, nil
+	})
+
+	// Config resource template
+	configTemplate := mcp.NewResourceTemplate(
+		"config://{namespace}/{app}/values",
+		"Config Resource",
+		mcp.WithTemplateDescription("App configuration values"),
+		mcp.WithTemplateMIMEType("application/json"),
+	)
+
+	s.AddResourceTemplate(configTemplate, func(rctx context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
+		content, err := provider.GetResource(rctx, request.Params.URI)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get resource %s: %w", request.Params.URI, err)
+		}
+
+		// Convert to JSON
+		jsonData, err := json.MarshalIndent(content, "", "  ")
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal resource content: %w", err)
+		}
+
+		return []mcp.ResourceContents{
+			mcp.TextResourceContents{
+				URI:      request.Params.URI,
+				MIMEType: "application/json",
+				Text:     string(jsonData),
+			},
+		}, nil
+	})
+
+	// Schema resource template
+	schemaTemplate := mcp.NewResourceTemplate(
+		"schema://{catalog}/{app}/{version}",
+		"Schema Resource",
+		mcp.WithTemplateDescription("App configuration schema"),
+		mcp.WithTemplateMIMEType("application/json"),
+	)
+
+	s.AddResourceTemplate(schemaTemplate, func(rctx context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
+		content, err := provider.GetResource(rctx, request.Params.URI)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get resource %s: %w", request.Params.URI, err)
+		}
+
+		// Convert to JSON
+		jsonData, err := json.MarshalIndent(content, "", "  ")
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal resource content: %w", err)
+		}
+
+		return []mcp.ResourceContents{
+			mcp.TextResourceContents{
+				URI:      request.Params.URI,
+				MIMEType: "application/json",
+				Text:     string(jsonData),
+			},
+		}, nil
+	})
+
+	// Changelog resource template
+	changelogTemplate := mcp.NewResourceTemplate(
+		"changelog://{catalog}/{app}",
+		"Changelog Resource",
+		mcp.WithTemplateDescription("App version changelog"),
+		mcp.WithTemplateMIMEType("application/json"),
+	)
+
+	s.AddResourceTemplate(changelogTemplate, func(rctx context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
+		content, err := provider.GetResource(rctx, request.Params.URI)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get resource %s: %w", request.Params.URI, err)
+		}
+
+		// Convert to JSON
+		jsonData, err := json.MarshalIndent(content, "", "  ")
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal resource content: %w", err)
+		}
+
+		return []mcp.ResourceContents{
+			mcp.TextResourceContents{
+				URI:      request.Params.URI,
+				MIMEType: "application/json",
+				Text:     string(jsonData),
+			},
+		}, nil
+	})
+
 	return nil
 }
 
@@ -174,4 +323,4 @@ func initializePrompts(s *server.MCPServer, ctx *internalServer.Context) error {
 	// Placeholder for prompt initialization
 	// We'll add actual prompts in subsequent commits
 	return nil
-} 
+}
