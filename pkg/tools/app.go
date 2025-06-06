@@ -10,36 +10,54 @@ import (
 
 	"github.com/giantswarm/mcp-giantswarm-apps/internal/server"
 	"github.com/giantswarm/mcp-giantswarm-apps/pkg/app"
+	"github.com/giantswarm/mcp-giantswarm-apps/pkg/organization"
 )
 
 // RegisterAppTools registers all app management tools
 func RegisterAppTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 	appClient := app.NewClient(ctx.DynamicClient)
 
-	// app.list tool
+	// app_list tool
 	listTool := mcp.NewTool(
-		"app.list",
+		"app_list",
 		mcp.WithDescription("List Giant Swarm apps with optional filtering"),
 		mcp.WithString("namespace", mcp.Description("Namespace to list apps from (empty for all namespaces)")),
+		mcp.WithString("organization", mcp.Description("Organization to list apps from (e.g., 'giantswarm')")),
 		mcp.WithString("labels", mcp.Description("Label selector (e.g., 'app=nginx,env=prod')")),
 		mcp.WithString("status", mcp.Description("Filter by release status (deployed, failed, pending, etc.)")),
 		mcp.WithString("catalog", mcp.Description("Filter by catalog name")),
 		mcp.WithBoolean("all-orgs", mcp.Description("List apps from all organization namespaces")),
+		mcp.WithBoolean("include-workload-clusters", mcp.Description("Include apps from workload cluster namespaces")),
 	)
 
 	s.AddTool(listTool, func(toolCtx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		args := req.Params.Arguments.(map[string]interface{})
 
 		namespace := getStringArg(args, "namespace")
+		org := getStringArg(args, "organization")
 		labelSelector := getStringArg(args, "labels")
 		status := getStringArg(args, "status")
 		catalog := getStringArg(args, "catalog")
 		allOrgs := getBoolArg(args, "all-orgs")
+		includeWorkloadClusters := getBoolArg(args, "include-workload-clusters")
 
 		var apps []*app.App
 		var err error
 
-		if allOrgs && namespace == "" {
+		// Determine which namespaces to query
+		if org != "" {
+			// List apps from specific organization
+			if includeWorkloadClusters {
+				apps, err = appClient.ListByOrganization(toolCtx, ctx.K8sClient, org, labelSelector)
+			} else {
+				// Just the organization namespace
+				orgNs := organization.GetOrganizationNamespace(org)
+				apps, err = appClient.List(toolCtx, orgNs, labelSelector)
+			}
+			if err != nil {
+				return nil, fmt.Errorf("failed to list apps for organization %s: %w", org, err)
+			}
+		} else if allOrgs && namespace == "" {
 			// List from all organization namespaces
 			orgNamespaces, err := appClient.GetOrganizationNamespaces(toolCtx, ctx.K8sClient)
 			if err != nil {
@@ -55,6 +73,7 @@ func RegisterAppTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 				apps = append(apps, nsApps...)
 			}
 		} else {
+			// List from specific namespace or all namespaces
 			apps, err = appClient.List(toolCtx, namespace, labelSelector)
 			if err != nil {
 				return nil, err
@@ -89,9 +108,9 @@ func RegisterAppTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		return mcp.NewToolResultText(output.String()), nil
 	})
 
-	// app.get tool
+	// app_get tool
 	getTool := mcp.NewTool(
-		"app.get",
+		"app_get",
 		mcp.WithDescription("Get detailed information about a specific app"),
 		mcp.WithString("name", mcp.Required(), mcp.Description("Name of the app")),
 		mcp.WithString("namespace", mcp.Required(), mcp.Description("Namespace of the app")),
@@ -152,9 +171,9 @@ func RegisterAppTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		return mcp.NewToolResultText(output.String()), nil
 	})
 
-	// app.create tool
+	// app_create tool
 	createTool := mcp.NewTool(
-		"app.create",
+		"app_create",
 		mcp.WithDescription("Create a new Giant Swarm app"),
 		mcp.WithString("name", mcp.Required(), mcp.Description("Name for the app resource")),
 		mcp.WithString("namespace", mcp.Required(), mcp.Description("Namespace to create the app in")),
@@ -228,9 +247,9 @@ func RegisterAppTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		return mcp.NewToolResultText(fmt.Sprintf("Successfully created app %s/%s", created.Namespace, created.Name)), nil
 	})
 
-	// app.update tool
+	// app_update tool
 	updateTool := mcp.NewTool(
-		"app.update",
+		"app_update",
 		mcp.WithDescription("Update an existing Giant Swarm app"),
 		mcp.WithString("name", mcp.Required(), mcp.Description("Name of the app")),
 		mcp.WithString("namespace", mcp.Required(), mcp.Description("Namespace of the app")),
@@ -287,9 +306,9 @@ func RegisterAppTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		return mcp.NewToolResultText(fmt.Sprintf("Successfully updated app %s/%s", updated.Namespace, updated.Name)), nil
 	})
 
-	// app.delete tool
+	// app_delete tool
 	deleteTool := mcp.NewTool(
-		"app.delete",
+		"app_delete",
 		mcp.WithDescription("Delete a Giant Swarm app"),
 		mcp.WithString("name", mcp.Required(), mcp.Description("Name of the app")),
 		mcp.WithString("namespace", mcp.Required(), mcp.Description("Namespace of the app")),

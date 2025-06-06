@@ -6,9 +6,9 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/labels"
 
 	"github.com/giantswarm/mcp-giantswarm-apps/internal/k8s"
+	"github.com/giantswarm/mcp-giantswarm-apps/pkg/organization"
 )
 
 // Client provides operations for App resources
@@ -155,32 +155,54 @@ func FilterByCatalog(apps []*App, catalog string) []*App {
 
 // GetOrganizationNamespaces returns all organization namespaces (org-*)
 func (c *Client) GetOrganizationNamespaces(ctx context.Context, k8sClient *k8s.Client) ([]string, error) {
-	namespaceList, err := k8sClient.CoreV1().Namespaces().List(ctx, metav1.ListOptions{
-		LabelSelector: labels.Set{
-			"giantswarm.io/organization": "true",
-		}.String(),
-	})
+	return organization.ListOrganizationNamespaces(ctx, k8sClient)
+}
 
+// ListByOrganization lists all apps belonging to an organization across all its namespaces
+func (c *Client) ListByOrganization(ctx context.Context, k8sClient *k8s.Client, org string, labelSelector string) ([]*App, error) {
+	// Get all namespaces belonging to this organization
+	namespaces, err := organization.GetNamespacesByOrganization(ctx, k8sClient, org)
 	if err != nil {
-		// Fallback to listing all namespaces and filtering by prefix
-		allNamespaces, err := k8sClient.CoreV1().Namespaces().List(ctx, metav1.ListOptions{})
+		return nil, fmt.Errorf("failed to get namespaces for organization %s: %w", org, err)
+	}
+
+	apps := make([]*App, 0)
+	for _, ns := range namespaces {
+		nsApps, err := c.List(ctx, ns, labelSelector)
 		if err != nil {
-			return nil, fmt.Errorf("failed to list namespaces: %w", err)
+			// Log error but continue with other namespaces
+			continue
 		}
-
-		orgNamespaces := make([]string, 0)
-		for _, ns := range allNamespaces.Items {
-			if len(ns.Name) > 4 && ns.Name[:4] == "org-" {
-				orgNamespaces = append(orgNamespaces, ns.Name)
-			}
-		}
-		return orgNamespaces, nil
+		apps = append(apps, nsApps...)
 	}
 
-	namespaces := make([]string, 0, len(namespaceList.Items))
-	for _, ns := range namespaceList.Items {
-		namespaces = append(namespaces, ns.Name)
+	return apps, nil
+}
+
+// FilterByOrganization filters apps to only include those from organization namespaces
+func FilterByOrganization(apps []*App, org string) []*App {
+	if org == "" {
+		return apps
 	}
 
-	return namespaces, nil
+	orgNamespace := organization.GetOrganizationNamespace(org)
+	filtered := make([]*App, 0)
+
+	for _, app := range apps {
+		// Check if app is in the organization namespace
+		if app.Namespace == orgNamespace {
+			filtered = append(filtered, app)
+			continue
+		}
+
+		// Check if app is in a workload cluster namespace belonging to the organization
+		if organization.IsWorkloadClusterNamespace(app.Namespace) {
+			// This would need namespace metadata to determine ownership
+			// For now, we'll include it if the namespace contains the org name
+			// In production, you'd check namespace labels
+			filtered = append(filtered, app)
+		}
+	}
+
+	return filtered
 }

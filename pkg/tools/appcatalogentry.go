@@ -16,9 +16,9 @@ import (
 func RegisterAppCatalogEntryTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 	client := appcatalogentry.NewClient(ctx.DynamicClient)
 
-	// appcatalogentry.list tool
+	// appcatalogentry_list tool
 	listTool := mcp.NewTool(
-		"appcatalogentry.list",
+		"appcatalogentry_list",
 		mcp.WithDescription("List app catalog entries"),
 		mcp.WithString("namespace", mcp.Description("Namespace to list entries from (empty for all namespaces)")),
 		mcp.WithString("catalog", mcp.Description("Filter by catalog name")),
@@ -92,9 +92,9 @@ func RegisterAppCatalogEntryTools(s *mcpserver.MCPServer, ctx *server.Context) e
 		return mcp.NewToolResultText(output.String()), nil
 	})
 
-	// appcatalogentry.get tool
+	// appcatalogentry_get tool
 	getTool := mcp.NewTool(
-		"appcatalogentry.get",
+		"appcatalogentry_get",
 		mcp.WithDescription("Get detailed information about a specific app catalog entry"),
 		mcp.WithString("name", mcp.Required(), mcp.Description("Name of the app catalog entry")),
 		mcp.WithString("namespace", mcp.Required(), mcp.Description("Namespace of the app catalog entry")),
@@ -174,9 +174,9 @@ func RegisterAppCatalogEntryTools(s *mcpserver.MCPServer, ctx *server.Context) e
 		return mcp.NewToolResultText(output.String()), nil
 	})
 
-	// appcatalogentry.search tool
+	// appcatalogentry_search tool
 	searchTool := mcp.NewTool(
-		"appcatalogentry.search",
+		"appcatalogentry_search",
 		mcp.WithDescription("Search for apps in the catalog"),
 		mcp.WithString("query", mcp.Required(), mcp.Description("Search query (searches in name, description, keywords)")),
 		mcp.WithBoolean("cluster-apps", mcp.Description("Show only cluster-wide apps")),
@@ -238,9 +238,9 @@ func RegisterAppCatalogEntryTools(s *mcpserver.MCPServer, ctx *server.Context) e
 		return mcp.NewToolResultText(output.String()), nil
 	})
 
-	// appcatalogentry.versions tool
+	// appcatalogentry_versions tool
 	versionsTool := mcp.NewTool(
-		"appcatalogentry.versions",
+		"appcatalogentry_versions",
 		mcp.WithDescription("List all available versions of an app"),
 		mcp.WithString("app", mcp.Required(), mcp.Description("App name to get versions for")),
 	)
