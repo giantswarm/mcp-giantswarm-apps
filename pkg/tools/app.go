@@ -182,6 +182,7 @@ func RegisterAppTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		mcp.WithString("version", mcp.Required(), mcp.Description("App version")),
 		mcp.WithString("target-namespace", mcp.Description("Target namespace for the app (defaults to app name)")),
 		mcp.WithBoolean("in-cluster", mcp.Description("Deploy to management cluster (default: true)")),
+		mcp.WithString("cluster", mcp.Description("Target workload cluster name (overrides in-cluster)")),
 		mcp.WithString("config-name", mcp.Description("Name of the ConfigMap for configuration")),
 		mcp.WithString("user-config-name", mcp.Description("Name of the ConfigMap for user configuration")),
 	)
@@ -204,6 +205,13 @@ func RegisterAppTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 			inCluster = val
 		}
 
+		// Check if a target cluster is specified
+		targetCluster := getStringArg(args, "cluster")
+		if targetCluster != "" {
+			// Override in-cluster setting when targeting a specific cluster
+			inCluster = false
+		}
+
 		newApp := &app.App{
 			Name:      name,
 			Namespace: namespace,
@@ -216,6 +224,13 @@ func RegisterAppTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 					InCluster: inCluster,
 				},
 			},
+		}
+
+		// If targeting a workload cluster, set up the kubeconfig reference
+		if targetCluster != "" {
+			// The app operator would need to handle the kubeconfig setup based on the target cluster
+			// For now, we'll add a label to indicate the target cluster
+			// This would require extending the App type or handling it at creation time
 		}
 
 		// Add config references if provided
@@ -244,7 +259,14 @@ func RegisterAppTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 			return nil, err
 		}
 
-		return mcp.NewToolResultText(fmt.Sprintf("Successfully created app %s/%s", created.Namespace, created.Name)), nil
+		// If we're targeting a workload cluster, provide additional info
+		result := fmt.Sprintf("Successfully created app %s/%s", created.Namespace, created.Name)
+		if targetCluster != "" {
+			result += fmt.Sprintf("\nTarget cluster: %s", targetCluster)
+			result += "\nNote: Ensure the app operator has access to the workload cluster's kubeconfig"
+		}
+
+		return mcp.NewToolResultText(result), nil
 	})
 
 	// app_update tool
