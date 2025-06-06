@@ -52,6 +52,11 @@ func NewDynamicClient(client *Client) (*DynamicClient, error) {
 	}, nil
 }
 
+// GetInterface returns the underlying dynamic interface
+func (d *DynamicClient) GetInterface() dynamic.Interface {
+	return d.client
+}
+
 // Apps returns the interface for working with App resources
 func (d *DynamicClient) Apps(namespace string) dynamic.ResourceInterface {
 	if namespace == "" {

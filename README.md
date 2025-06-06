@@ -1,14 +1,21 @@
-# MCP Giant Swarm Apps Server
+# MCP Server for Giant Swarm App Platform
 
-An MCP (Model Context Protocol) server for managing Giant Swarm App Platform applications. This server enables AI assistants to interact with Giant Swarm apps, catalogs, and configurations.
+An MCP (Model Context Protocol) server that provides tools and resources for managing Giant Swarm App Platform deployments.
 
 ## Features
 
-- **App Management**: Create, update, delete, and manage apps deployed through Giant Swarm App Platform
-- **Catalog Browsing**: Browse and search available app catalogs and their entries
-- **Configuration Management**: Handle app configurations through ConfigMaps and Secrets
-- **Multi-tenancy Support**: Work with Giant Swarm's organization-based namespace model
+- **App Management**: Create, update, list, and delete Giant Swarm apps
+- **Catalog Support**: Browse and search app catalogs and available app versions
+- **Configuration Management**: Handle app configurations via ConfigMaps and Secrets
+- **Multi-namespace Support**: Work with organization-based namespaces
 - **CAPI Integration**: Support for workload cluster app deployments
+- **Prompts**: Interactive guides for common operations
+
+## Prerequisites
+
+- Go 1.21 or later
+- Access to a Giant Swarm management cluster
+- Kubernetes credentials configured (`kubectl` access)
 
 ## Installation
 
@@ -76,57 +83,93 @@ To use with Claude Desktop or other MCP-compatible clients, add to your configur
 ## Available Tools
 
 ### App Management
-- `app_list` - List apps with filtering options
-- `app_get` - Get detailed app information
-- `app_create` - Create a new app from catalog
-- `app_update` - Update app configuration or version
+
+- `app_list` - List Giant Swarm apps with filtering options
+- `app_get` - Get detailed information about a specific app
+- `app_create` - Create a new Giant Swarm app
+- `app_update` - Update an existing app
 - `app_delete` - Delete an app
 
 ### Catalog Management
-- `catalog_list` - List available catalogs
-- `catalog_get` - Get catalog details
-- `catalog_create` - Create a new catalog
-- `catalog_update` - Update catalog settings
-- `catalog_delete` - Delete a catalog
 
-### App Catalog Entry Management
-- `appcatalogentry_list` - List app catalog entries
-- `appcatalogentry_get` - Get app catalog entry details
-- `appcatalogentry_search` - Search for apps in catalogs
-- `appcatalogentry_versions` - List all versions of an app
+- `catalog_list` - List available app catalogs
+- `catalog_get` - Get detailed catalog information
+- `catalog_refresh` - Refresh catalog entries
+- `catalog_search` - Search for apps across catalogs
 
-### Configuration
+### App Catalog Entries
+
+- `appcatalogentry_list` - List apps from catalogs
+- `appcatalogentry_get` - Get detailed app information
+- `appcatalogentry_versions` - List available versions
+- `appcatalogentry_search` - Search catalog entries
+
+### Configuration Management
+
 - `config_get` - Get app configuration
-- `config_set` - Update app configuration
-- `config_validate` - Validate configuration
-- `config_diff` - Compare configurations
-- `config_merge` - Merge multiple configurations
-- `secret_create` - Create a new secret
-- `secret_update` - Update an existing secret
+- `config_create` - Create new configuration
+- `config_update` - Update configuration
+- `config_values` - Get configuration values
 
-### Organization Management
-- `organization_list` - List all organizations
-- `organization_namespaces` - List namespaces for an organization
-- `organization_info` - Get namespace organization context
+### Organization Management  
+
+- `organization_list` - List organizations
+- `organization_namespaces` - List organization namespaces
+- `organization_info` - Get namespace details
 - `organization_validate_access` - Check access permissions
 
-### Kubernetes
-- `health` - Check server and Kubernetes health
-- `kubernetes_contexts` - List available Kubernetes contexts
+### Cluster Management (CAPI)
 
-### Interactive Prompts
-- `deploy-app` - Step-by-step guide to deploy an app
-- `upgrade-app` - Guide for upgrading apps safely
-- `troubleshoot-app` - Comprehensive troubleshooting guide
-- `create-catalog` - Create custom app catalogs
-- `configure-app` - Interactive configuration wizard
+- `cluster_list` - List available workload clusters
+- `cluster_get` - Get detailed cluster information
+- `cluster_apps` - List apps deployed to a specific cluster
 
-## Resources
+### System Tools
+
+- `health` - Check server and connection health
+- `kubernetes_contexts` - List available contexts
+
+## Available Resources
 
 The server exposes various resources:
 - `app://{namespace}/{name}` - App details and status
 - `catalog://{name}` - Catalog information
 - `config://{namespace}/{app}/values` - App configuration
+
+## Usage Examples
+
+### List workload clusters
+
+```bash
+# List all clusters
+mcp cluster_list
+
+# List clusters for an organization
+mcp cluster_list --organization giantswarm
+
+# List only ready clusters
+mcp cluster_list --ready-only
+```
+
+### Deploy app to workload cluster
+
+```bash
+# Deploy app to a specific workload cluster
+mcp app_create \
+  --name nginx-ingress \
+  --namespace org-giantswarm \
+  --catalog giantswarm \
+  --app nginx-ingress-controller \
+  --version 2.1.0 \
+  --cluster prod-cluster
+```
+
+### List apps in a workload cluster
+
+```bash
+# List all apps in a specific cluster
+mcp cluster_apps --cluster prod-cluster --organization giantswarm
+```
 
 ## Development
 

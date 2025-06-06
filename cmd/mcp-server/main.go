@@ -110,6 +110,11 @@ func initializeTools(s *server.MCPServer, ctx *internalServer.Context) error {
 		return fmt.Errorf("failed to register organization tools: %w", err)
 	}
 
+	// Register cluster management tools for CAPI integration
+	if err := tools.RegisterClusterTools(s, ctx); err != nil {
+		return fmt.Errorf("failed to register cluster tools: %w", err)
+	}
+
 	// Register prompts
 	if err := prompts.RegisterPrompts(s, ctx); err != nil {
 		return fmt.Errorf("failed to register prompts: %w", err)
