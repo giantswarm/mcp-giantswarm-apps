@@ -16,9 +16,9 @@ import (
 func RegisterConfigTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 	client := config.NewClient(ctx.K8sClient)
 
-	// config.get tool
+	// config_get tool
 	getTool := mcp.NewTool(
-		"config.get",
+		"config_get",
 		mcp.WithDescription("Get app configuration (ConfigMap or Secret)"),
 		mcp.WithString("name", mcp.Required(), mcp.Description("Name of the ConfigMap or Secret")),
 		mcp.WithString("namespace", mcp.Required(), mcp.Description("Namespace")),
@@ -102,9 +102,9 @@ func RegisterConfigTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		return mcp.NewToolResultText(output), nil
 	})
 
-	// config.set tool
+	// config_set tool
 	setTool := mcp.NewTool(
-		"config.set",
+		"config_set",
 		mcp.WithDescription("Update app configuration values"),
 		mcp.WithString("name", mcp.Required(), mcp.Description("Name of the ConfigMap or Secret")),
 		mcp.WithString("namespace", mcp.Required(), mcp.Description("Namespace")),
@@ -171,9 +171,9 @@ func RegisterConfigTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		return mcp.NewToolResultText(fmt.Sprintf("Successfully set %s=%s in %s %s/%s", key, value, configType, namespace, name)), nil
 	})
 
-	// config.validate tool
+	// config_validate tool
 	validateTool := mcp.NewTool(
-		"config.validate",
+		"config_validate",
 		mcp.WithDescription("Validate configuration against a schema"),
 		mcp.WithString("name", mcp.Required(), mcp.Description("Name of the ConfigMap or Secret")),
 		mcp.WithString("namespace", mcp.Required(), mcp.Description("Namespace")),
@@ -241,9 +241,9 @@ func RegisterConfigTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		return mcp.NewToolResultText(output.String()), nil
 	})
 
-	// config.diff tool
+	// config_diff tool
 	diffTool := mcp.NewTool(
-		"config.diff",
+		"config_diff",
 		mcp.WithDescription("Show differences between two configurations"),
 		mcp.WithString("name1", mcp.Required(), mcp.Description("Name of the first ConfigMap/Secret")),
 		mcp.WithString("namespace1", mcp.Required(), mcp.Description("Namespace of the first config")),
@@ -322,9 +322,9 @@ func RegisterConfigTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		return mcp.NewToolResultText(output.String()), nil
 	})
 
-	// secret.create tool
+	// secret_create tool
 	createSecretTool := mcp.NewTool(
-		"secret.create",
+		"secret_create",
 		mcp.WithDescription("Create a new secret for an app"),
 		mcp.WithString("name", mcp.Required(), mcp.Description("Name of the secret")),
 		mcp.WithString("namespace", mcp.Required(), mcp.Description("Namespace")),
@@ -383,9 +383,9 @@ func RegisterConfigTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		return mcp.NewToolResultText(fmt.Sprintf("Successfully created secret %s/%s with %d keys", namespace, name, len(data))), nil
 	})
 
-	// secret.update tool
+	// secret_update tool
 	updateSecretTool := mcp.NewTool(
-		"secret.update",
+		"secret_update",
 		mcp.WithDescription("Update an existing secret"),
 		mcp.WithString("name", mcp.Required(), mcp.Description("Name of the secret")),
 		mcp.WithString("namespace", mcp.Required(), mcp.Description("Namespace")),
@@ -447,9 +447,9 @@ func RegisterConfigTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		return mcp.NewToolResultText(fmt.Sprintf("Successfully updated secret %s/%s", namespace, name)), nil
 	})
 
-	// config.merge tool for merging configurations
+	// config_merge tool for merging configurations
 	mergeTool := mcp.NewTool(
-		"config.merge",
+		"config_merge",
 		mcp.WithDescription("Merge multiple configurations (later ones take precedence)"),
 		mcp.WithString("configs", mcp.Required(), mcp.Description("Comma-separated list of namespace/name pairs")),
 		mcp.WithString("type", mcp.Description("Type: configmap or secret (default: configmap)")),

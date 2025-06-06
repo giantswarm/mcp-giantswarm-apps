@@ -12,6 +12,7 @@ import (
 
 	"github.com/giantswarm/mcp-giantswarm-apps/internal/k8s"
 	internalServer "github.com/giantswarm/mcp-giantswarm-apps/internal/server"
+	"github.com/giantswarm/mcp-giantswarm-apps/pkg/prompts"
 	"github.com/giantswarm/mcp-giantswarm-apps/pkg/resources"
 	"github.com/giantswarm/mcp-giantswarm-apps/pkg/tools"
 )
@@ -104,6 +105,16 @@ func initializeTools(s *server.MCPServer, ctx *internalServer.Context) error {
 		return fmt.Errorf("failed to register config tools: %w", err)
 	}
 
+	// Register organization management tools
+	if err := tools.RegisterOrganizationTools(s, ctx); err != nil {
+		return fmt.Errorf("failed to register organization tools: %w", err)
+	}
+
+	// Register prompts
+	if err := prompts.RegisterPrompts(s, ctx); err != nil {
+		return fmt.Errorf("failed to register prompts: %w", err)
+	}
+
 	// Health check tool
 	healthTool := mcp.NewTool(
 		"health",
@@ -141,7 +152,7 @@ func initializeTools(s *server.MCPServer, ctx *internalServer.Context) error {
 
 	// List contexts tool
 	listContextsTool := mcp.NewTool(
-		"kubernetes.contexts",
+		"kubernetes_contexts",
 		mcp.WithDescription("List available Kubernetes contexts"),
 	)
 

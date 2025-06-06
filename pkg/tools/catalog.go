@@ -10,31 +10,65 @@ import (
 
 	"github.com/giantswarm/mcp-giantswarm-apps/internal/server"
 	"github.com/giantswarm/mcp-giantswarm-apps/pkg/catalog"
+	"github.com/giantswarm/mcp-giantswarm-apps/pkg/organization"
 )
 
 // RegisterCatalogTools registers all catalog management tools
 func RegisterCatalogTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 	catalogClient := catalog.NewClient(ctx.DynamicClient)
 
-	// catalog.list tool
+	// catalog_list tool
 	listTool := mcp.NewTool(
-		"catalog.list",
+		"catalog_list",
 		mcp.WithDescription("List Giant Swarm catalogs"),
 		mcp.WithString("namespace", mcp.Description("Namespace to list catalogs from (empty for all namespaces)")),
+		mcp.WithString("organization", mcp.Description("Organization to list catalogs from (e.g., 'giantswarm')")),
 		mcp.WithString("type", mcp.Description("Filter by catalog type (stable, testing, community)")),
 		mcp.WithString("visibility", mcp.Description("Filter by visibility (public, private)")),
+		mcp.WithBoolean("all-orgs", mcp.Description("List catalogs from all organization namespaces")),
 	)
 
 	s.AddTool(listTool, func(toolCtx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		args := req.Params.Arguments.(map[string]interface{})
 
 		namespace := getStringArg(args, "namespace")
+		org := getStringArg(args, "organization")
 		catalogType := getStringArg(args, "type")
 		visibility := getStringArg(args, "visibility")
+		allOrgs := getBoolArg(args, "all-orgs")
 
-		catalogs, err := catalogClient.List(toolCtx, namespace)
-		if err != nil {
-			return nil, err
+		var catalogs []*catalog.Catalog
+		var err error
+
+		// Determine which namespaces to query
+		if org != "" {
+			// List catalogs from organization namespace
+			orgNs := organization.GetOrganizationNamespace(org)
+			catalogs, err = catalogClient.List(toolCtx, orgNs)
+			if err != nil {
+				return nil, fmt.Errorf("failed to list catalogs for organization %s: %w", org, err)
+			}
+		} else if allOrgs && namespace == "" {
+			// List from all organization namespaces
+			orgNamespaces, err := organization.ListOrganizationNamespaces(toolCtx, ctx.K8sClient)
+			if err != nil {
+				return nil, fmt.Errorf("failed to get organization namespaces: %w", err)
+			}
+
+			catalogs = make([]*catalog.Catalog, 0)
+			for _, ns := range orgNamespaces {
+				nsCatalogs, err := catalogClient.List(toolCtx, ns)
+				if err != nil {
+					continue // Skip namespaces with errors
+				}
+				catalogs = append(catalogs, nsCatalogs...)
+			}
+		} else {
+			// List from specific namespace or all namespaces
+			catalogs, err = catalogClient.List(toolCtx, namespace)
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		// Apply filters
@@ -69,9 +103,9 @@ func RegisterCatalogTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		return mcp.NewToolResultText(output.String()), nil
 	})
 
-	// catalog.get tool
+	// catalog_get tool
 	getTool := mcp.NewTool(
-		"catalog.get",
+		"catalog_get",
 		mcp.WithDescription("Get detailed information about a specific catalog"),
 		mcp.WithString("name", mcp.Required(), mcp.Description("Name of the catalog")),
 		mcp.WithString("namespace", mcp.Required(), mcp.Description("Namespace of the catalog")),
@@ -128,9 +162,9 @@ func RegisterCatalogTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		return mcp.NewToolResultText(output.String()), nil
 	})
 
-	// catalog.create tool
+	// catalog_create tool
 	createTool := mcp.NewTool(
-		"catalog.create",
+		"catalog_create",
 		mcp.WithDescription("Create a new Giant Swarm catalog"),
 		mcp.WithString("name", mcp.Required(), mcp.Description("Name for the catalog")),
 		mcp.WithString("namespace", mcp.Required(), mcp.Description("Namespace to create the catalog in")),
@@ -208,9 +242,9 @@ func RegisterCatalogTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		return mcp.NewToolResultText(fmt.Sprintf("Successfully created catalog %s/%s", created.Namespace, created.Name)), nil
 	})
 
-	// catalog.update tool
+	// catalog_update tool
 	updateTool := mcp.NewTool(
-		"catalog.update",
+		"catalog_update",
 		mcp.WithDescription("Update an existing Giant Swarm catalog"),
 		mcp.WithString("name", mcp.Required(), mcp.Description("Name of the catalog")),
 		mcp.WithString("namespace", mcp.Required(), mcp.Description("Namespace of the catalog")),
@@ -276,9 +310,9 @@ func RegisterCatalogTools(s *mcpserver.MCPServer, ctx *server.Context) error {
 		return mcp.NewToolResultText(fmt.Sprintf("Successfully updated catalog %s/%s", updated.Namespace, updated.Name)), nil
 	})
 
-	// catalog.delete tool
+	// catalog_delete tool
 	deleteTool := mcp.NewTool(
-		"catalog.delete",
+		"catalog_delete",
 		mcp.WithDescription("Delete a Giant Swarm catalog"),
 		mcp.WithString("name", mcp.Required(), mcp.Description("Name of the catalog")),
 		mcp.WithString("namespace", mcp.Required(), mcp.Description("Namespace of the catalog")),

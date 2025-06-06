@@ -76,23 +76,50 @@ To use with Claude Desktop or other MCP-compatible clients, add to your configur
 ## Available Tools
 
 ### App Management
-- `app.list` - List apps with filtering options
-- `app.get` - Get detailed app information
-- `app.create` - Create a new app from catalog
-- `app.update` - Update app configuration or version
-- `app.delete` - Delete an app
-- `app.rollback` - Rollback to previous version
+- `app_list` - List apps with filtering options
+- `app_get` - Get detailed app information
+- `app_create` - Create a new app from catalog
+- `app_update` - Update app configuration or version
+- `app_delete` - Delete an app
 
 ### Catalog Management
-- `catalog.list` - List available catalogs
-- `catalog.get` - Get catalog details
-- `catalog.search` - Search apps across catalogs
-- `catalog.browse` - Browse apps in a specific catalog
+- `catalog_list` - List available catalogs
+- `catalog_get` - Get catalog details
+- `catalog_create` - Create a new catalog
+- `catalog_update` - Update catalog settings
+- `catalog_delete` - Delete a catalog
+
+### App Catalog Entry Management
+- `appcatalogentry_list` - List app catalog entries
+- `appcatalogentry_get` - Get app catalog entry details
+- `appcatalogentry_search` - Search for apps in catalogs
+- `appcatalogentry_versions` - List all versions of an app
 
 ### Configuration
-- `config.get` - Get app configuration
-- `config.set` - Update app configuration
-- `config.validate` - Validate configuration
+- `config_get` - Get app configuration
+- `config_set` - Update app configuration
+- `config_validate` - Validate configuration
+- `config_diff` - Compare configurations
+- `config_merge` - Merge multiple configurations
+- `secret_create` - Create a new secret
+- `secret_update` - Update an existing secret
+
+### Organization Management
+- `organization_list` - List all organizations
+- `organization_namespaces` - List namespaces for an organization
+- `organization_info` - Get namespace organization context
+- `organization_validate_access` - Check access permissions
+
+### Kubernetes
+- `health` - Check server and Kubernetes health
+- `kubernetes_contexts` - List available Kubernetes contexts
+
+### Interactive Prompts
+- `deploy-app` - Step-by-step guide to deploy an app
+- `upgrade-app` - Guide for upgrading apps safely
+- `troubleshoot-app` - Comprehensive troubleshooting guide
+- `create-catalog` - Create custom app catalogs
+- `configure-app` - Interactive configuration wizard
 
 ## Resources
 
