@@ -1,52 +1,25 @@
-.PHONY: build run test clean install
+# DO NOT EDIT. Generated with:
+#
+#    devctl
+#
+#    https://github.com/giantswarm/devctl/blob/6a704f7e2a8b0f09e82b5bab88f17971af849711/pkg/gen/input/makefile/internal/file/Makefile.template
+#
 
-# Variables
-BINARY_NAME=mcp-giantswarm-apps
-MAIN_PATH=cmd/mcp-server/main.go
-BUILD_DIR=build
+include Makefile.*.mk
 
-# Build the binary
-build:
-	@echo "Building $(BINARY_NAME)..."
-	@mkdir -p $(BUILD_DIR)
-	go build -o $(BUILD_DIR)/$(BINARY_NAME) $(MAIN_PATH)
+##@ General
 
-# Run the server
-run: build
-	@echo "Running $(BINARY_NAME)..."
-	@$(BUILD_DIR)/$(BINARY_NAME)
+# The help target prints out all targets with their descriptions organized
+# beneath their categories. The categories are represented by '##@' and the
+# target descriptions by '##'. The awk commands is responsible for reading the
+# entire set of makefiles included in this invocation, looking for lines of the
+# file as xyz: ## something, and then pretty-format the target and help. Then,
+# if there's a line with ##@ something, that gets pretty-printed as a category.
+# More info on the usage of ANSI control characters for terminal formatting:
+# https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_parameters
+# More info on the awk command:
+# http://linuxcommand.org/lc3_adv_awk.php
 
-# Run tests
-test:
-	@echo "Running tests..."
-	go test -v ./...
-
-# Clean build artifacts
-clean:
-	@echo "Cleaning..."
-	@rm -rf $(BUILD_DIR)
-	@go clean
-
-# Install dependencies
-deps:
-	@echo "Installing dependencies..."
-	go mod download
-	go mod tidy
-
-# Install the binary to GOPATH/bin
-install: build
-	@echo "Installing $(BINARY_NAME)..."
-	@cp $(BUILD_DIR)/$(BINARY_NAME) $(GOPATH)/bin/
-
-# Format code
-fmt:
-	@echo "Formatting code..."
-	go fmt ./...
-
-# Lint code
-lint:
-	@echo "Linting code..."
-	golangci-lint run
-
-# All: clean, format, test, and build
-all: clean fmt test build 
+.PHONY: help
+help: ## Display this help.
+	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z%\\\/_0-9-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
