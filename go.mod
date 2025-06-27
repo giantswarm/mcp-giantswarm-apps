@@ -1,9 +1,9 @@
 module github.com/giantswarm/mcp-giantswarm-apps
 
-go 1.24.3
+go 1.24.4
 
 require (
-	github.com/mark3labs/mcp-go v0.31.0
+	github.com/mark3labs/mcp-go v0.32.0
 	k8s.io/api v0.33.1
 	k8s.io/apimachinery v0.33.1
 	k8s.io/client-go v0.33.1
