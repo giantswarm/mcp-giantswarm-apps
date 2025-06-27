@@ -39,7 +39,7 @@ Before writing a single line of implementation code, you must have a clear plan 
 
 ### 1.1. Select an Issue & State Your Intent
 
-1.  **List Open Issues:** Use `mcp_github_list_issues` to see available tasks for `giantswarm/mcp-gs-apps`.
+1.  **List Open Issues:** Use `mcp_github_list_issues` to see available tasks for `giantswarm/mcp-giantswarm-apps`.
 2.  **Choose an Issue:** Select the highest-priority issue you are able to work on.
 3.  **Get Details:** Use `mcp_github_get_issue` to retrieve its full details.
 4.  **Announce Your Plan:** In the chat, you **MUST** summarize the issue (title, number) and your intended high-level approach.

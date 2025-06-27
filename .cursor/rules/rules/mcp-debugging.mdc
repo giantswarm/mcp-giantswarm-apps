@@ -3,7 +3,7 @@ description:
 globs: 
 alwaysApply: true
 ---
-## Debugging mcp-gs-apps via mcp-debug
+## Debugging mcp-giantswarm-apps via mcp-debug
 
 mcp-debug provides core debugging tools to test and explore the functionality implemented in the aggregated MCP server. This guide focuses on mcp-debugs internal debugging capabilities.
 
@@ -51,7 +51,7 @@ If a service shows as unhealthy:
 - The fix involves ensuring `GetServiceData()` returns the MCP client
 
 **Service shows as unhealthy**
-- Check logs in the mcp-gs-apps TUI (if available)
+- Check logs in the mcp-giantswarm-apps TUI (if available)
 - Use `core_service_status` for detailed information
 - Try `core_service_restart` to recover
 

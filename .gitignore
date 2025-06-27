@@ -1,9 +1,9 @@
 # Binary output
-/mcp-gs-apps
+/mcp-giantswarm-apps
 dist/
 
 # Configuration files
-.mcp-gs-apps/config.yaml
+.mcp-giantswarm-apps/config.yaml
 .cursor/mcp.json
 
 # Go specific
@@ -69,4 +69,4 @@ tasks/
 
 # Build artifacts
 build/
-bin/ mcp-gs-apps
+bin/ mcp-giantswarm-apps

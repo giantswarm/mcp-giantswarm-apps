@@ -12,12 +12,12 @@ before:
     # - go generate ./...
 
 builds:
-  - id: mcp-gs-apps
+  - id: mcp-giantswarm-apps
     # Path to main.go file or main package.
     main: .
     # Binary name.
     # Defaults to the project name.
-    binary: mcp-gs-apps
+    binary: mcp-giantswarm-apps
     # GOOS list to build for.
     # Defaults to linux, windows and darwin.
     goos:
@@ -114,18 +114,18 @@ release:
   #   This is the footer
   # Add back the extra_files section with corrected globs
   extra_files:
-    - glob: ./dist/mcp-gs-apps_darwin_amd64*/mcp-gs-apps
-      name_template: mcp-gs-apps_darwin_amd64
-    - glob: ./dist/mcp-gs-apps_darwin_arm64*/mcp-gs-apps
-      name_template: mcp-gs-apps_darwin_arm64
-    - glob: ./dist/mcp-gs-apps_linux_amd64*/mcp-gs-apps
-      name_template: mcp-gs-apps_linux_amd64
-    - glob: ./dist/mcp-gs-apps_linux_arm64*/mcp-gs-apps
-      name_template: mcp-gs-apps_linux_arm64
-    - glob: ./dist/mcp-gs-apps_windows_amd64*/mcp-gs-apps.exe
-      name_template: mcp-gs-apps_windows_amd64.exe
-    - glob: ./dist/mcp-gs-apps_windows_arm64*/mcp-gs-apps.exe
-      name_template: mcp-gs-apps_windows_arm64.exe
+    - glob: ./dist/mcp-giantswarm-apps_darwin_amd64*/mcp-giantswarm-apps
+      name_template: mcp-giantswarm-apps_darwin_amd64
+    - glob: ./dist/mcp-giantswarm-apps_darwin_arm64*/mcp-giantswarm-apps
+      name_template: mcp-giantswarm-apps_darwin_arm64
+    - glob: ./dist/mcp-giantswarm-apps_linux_amd64*/mcp-giantswarm-apps
+      name_template: mcp-giantswarm-apps_linux_amd64
+    - glob: ./dist/mcp-giantswarm-apps_linux_arm64*/mcp-giantswarm-apps
+      name_template: mcp-giantswarm-apps_linux_arm64
+    - glob: ./dist/mcp-giantswarm-apps_windows_amd64*/mcp-giantswarm-apps.exe
+      name_template: mcp-giantswarm-apps_windows_amd64.exe
+    - glob: ./dist/mcp-giantswarm-apps_windows_arm64*/mcp-giantswarm-apps.exe
+      name_template: mcp-giantswarm-apps_windows_arm64.exe
   # If set to true, will generate the release notes using github's api
   # instead of using the changelog.
   # Default is false.

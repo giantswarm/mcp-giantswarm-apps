@@ -5,7 +5,7 @@ alwaysApply: true
 ---
 # Architecture Principles
 
-This document outlines the fundamental architectural principles and patterns for the `mcp-gs-apps` codebase. Adherence to these guidelines is **mandatory** to maintain a clean, decoupled, and testable system.
+This document outlines the fundamental architectural principles and patterns for the `mcp-giantswarm-apps` codebase. Adherence to these guidelines is **mandatory** to maintain a clean, decoupled, and testable system.
 
 ---
 

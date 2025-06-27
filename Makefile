@@ -28,11 +28,11 @@ help: ## Display this help.
 
 .PHONY: build
 build: ## Build the binary for the current platform
-	go build -o mcp-gs-apps
+	go build -o mcp-giantswarm-apps
 
 .PHONY: install
 install: build ## Install the binary
-	mv mcp-gs-apps $(GOPATH)/bin/mcp-gs-apps
+	mv mcp-giantswarm-apps $(GOPATH)/bin/mcp-giantswarm-apps
 
 ##@ Release
 
