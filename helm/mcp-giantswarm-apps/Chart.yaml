@@ -1,0 +1,22 @@
+apiVersion: v2
+name: mcp-giantswarm-apps
+description: A Helm chart for mcp-giantswarm-apps - Model Context Protocol server for Giant Swarm app management
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+home: https://github.com/giantswarm/mcp-giantswarm-apps
+icon: https://s.giantswarm.io/app-icons/giantswarm/1/dark.svg
+sources:
+  - https://github.com/giantswarm/mcp-giantswarm-apps
+keywords:
+  - mcp
+  - giantswarm
+  - apps
+  - model-context-protocol
+maintainers:
+  - name: Giant Swarm
+    email: team-planeteers@giantswarm.io
+annotations:
+  io.giantswarm.application.team: team-planeteers
+  io.giantswarm.application.audience: customers
+  io.giantswarm.application.managed: "true"

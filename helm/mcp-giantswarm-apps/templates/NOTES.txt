@@ -1,0 +1,14 @@
+1. mcp-giantswarm-apps has been deployed.
+
+   Transport: {{ .Values.mcpGiantswarmApps.transport }}
+
+2. Access the MCP server:
+{{- if eq .Values.service.type "ClusterIP" }}
+   kubectl port-forward svc/{{ include "mcp-giantswarm-apps.fullname" . }} {{ .Values.service.port }}:{{ .Values.service.port }}
+{{- end }}
+
+3. The server provides MCP tools for Giant Swarm app management including:
+   - App deployment and lifecycle management
+   - Catalog browsing and search
+   - Configuration management
+   - Organization operations

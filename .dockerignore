@@ -1,0 +1,11 @@
+.git
+.circleci
+.github
+.cursor
+.goreleaser.yaml
+helm/
+docs/
+*.md
+.env*
+.vscode/
+.idea/
